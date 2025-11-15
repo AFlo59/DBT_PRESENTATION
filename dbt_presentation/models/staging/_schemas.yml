@@ -1,0 +1,48 @@
+version: 2
+
+models:
+  - name: dt_stg_orders
+    description: "Orders staging table"
+    columns:
+      - name: ORDER_ID
+        type: VARCHAR(6)
+        description: "Order ID"
+      - name: CUSTOMER_ID
+        type: VARCHAR(5)
+        description: "Customer ID"
+      - name: PRODUCT_ID
+        type: VARCHAR(4)
+        description: "Product ID"
+      - name: PRODUCT_NAME
+        type: VARCHAR(64)
+        description: "Product Name"
+      - name: ORDER_DATE
+        type: DATE
+        description: "Order Date"
+      - name: QUANTITY
+        type: NUMBER(38,0)
+        description: "Quantity"
+      - name: UNIT_PRICE
+        type: NUMBER(38,2)
+        description: "Unit Price"
+      - name: TOTAL_AMOUNT
+        type: NUMBER(38,2)
+        description: "Total Amount"
+      - name: STATUS
+        type: VARCHAR(32)
+        description: "Status"
+      - name: REGION
+        type: VARCHAR(32)
+        description: "Region"
+      - name: CUSTOMER_SEGMENT
+        type: VARCHAR(32)
+        description: "Customer Segment"
+      - name: LOAD_DATE
+        type: TIMESTAMP_NTZ
+        description: "Load Date"
+      - name: LOAD_DATE_DAY
+        type: DATE
+        description: "Load Date Day"
+      - name: LOAD_DATE_MONTH
+        type: VARCHAR(7)
+        description: "Load Date Month"

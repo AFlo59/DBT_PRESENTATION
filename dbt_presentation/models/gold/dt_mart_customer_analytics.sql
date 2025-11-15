@@ -1,0 +1,44 @@
+{{ config(
+    materialized='incremental',
+    unique_key=['CUSTOMER_ID', 'REGION', 'CUSTOMER_SEGMENT', 'LOAD_DATE_MONTH'],
+    on_schema_change='append_new_columns'
+) }}
+
+WITH DT_MART AS (
+    SELECT
+        CM.CUSTOMER_ID,
+        CM.REGION,
+        CM.CUSTOMER_SEGMENT,
+        SUM(CM.TOTAL_ORDERS) AS TOTAL_ORDERS,
+        SUM(CM.TOTAL_PRODUCTS) AS TOTAL_PRODUCTS,
+        SUM(CM.TOTAL_REVENUE) AS TOTAL_REVENUE,
+        AVG(CM.AVG_ORDER_VALUE) AS AVG_ORDER_VALUE,
+        MIN(CM.FIRST_ORDER_DATE) AS FIRST_ORDER_DATE,
+        MAX(CM.LAST_ORDER_DATE) AS LAST_ORDER_DATE,
+        DATEDIFF(DAY, MIN(CM.FIRST_ORDER_DATE), MAX(CM.LAST_ORDER_DATE)) AS CUSTOMER_LIFETIME_DAYS,
+        CASE
+            WHEN SUM(CM.TOTAL_REVENUE) >= 5000 THEN 'High Value'
+            WHEN SUM(CM.TOTAL_REVENUE) >= 2000 THEN 'Medium Value'
+            ELSE 'Low Value'
+        END AS VALUE_SEGMENT
+    FROM
+        {{ ref('dt_slv_customer_metrics') }} CM
+    {% if is_incremental() %}
+        WHERE CM.LOAD_DATE_MONTH >= COALESCE((SELECT MAX(LOAD_DATE_MONTH) FROM {{ this }}), '1900-01')
+    {% endif %}
+    GROUP BY
+        CM.CUSTOMER_ID,
+        CM.REGION,
+        CM.CUSTOMER_SEGMENT
+)
+SELECT
+    *,
+    CURRENT_TIMESTAMP() AS LOAD_DATE,
+    CURRENT_DATE() AS LOAD_DATE_DAY,
+    TO_VARCHAR(CURRENT_DATE(),'YYYY-MM') AS LOAD_DATE_MONTH
+FROM
+    DT_MART
+ORDER BY
+    LOAD_DATE_MONTH DESC,
+    TOTAL_REVENUE DESC
+

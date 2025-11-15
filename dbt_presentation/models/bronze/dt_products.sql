@@ -1,0 +1,20 @@
+WITH DT_BRONZE AS (
+    SELECT
+        DISTINCT
+         PRODUCT_ID,
+         PRODUCT_NAME,
+         UNIT_PRICE
+    FROM
+        {{ ref('dt_stg_orders') }}
+)
+SELECT
+    *,
+    CURRENT_TIMESTAMP() AS LOAD_DATE,
+    CURRENT_DATE() AS LOAD_DATE_DAY,
+    TO_VARCHAR(CURRENT_DATE(),'YYYY-MM') AS LOAD_DATE_MONTH
+FROM
+    DT_BRONZE
+    GROUP BY
+    PRODUCT_ID,
+    PRODUCT_NAME,
+    UNIT_PRICE

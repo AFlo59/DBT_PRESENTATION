@@ -1,0 +1,43 @@
+{{ config(
+    materialized='incremental',
+    unique_key=['PRODUCT_ID', 'LOAD_DATE_MONTH'],
+    on_schema_change='append_new_columns'
+) }}
+
+WITH DT_MART AS (
+    SELECT
+        PM.PRODUCT_ID,
+        PM.PRODUCT_NAME,
+        PM.UNIT_PRICE,
+        SUM(PM.TOTAL_ORDERS) AS TOTAL_ORDERS,
+        SUM(PM.TOTAL_CUSTOMERS) AS TOTAL_CUSTOMERS,
+        SUM(PM.TOTAL_QUANTITY_SOLD) AS TOTAL_QUANTITY_SOLD,
+        SUM(PM.TOTAL_REVENUE) AS TOTAL_REVENUE,
+        AVG(PM.AVG_QUANTITY_PER_ORDER) AS AVG_QUANTITY_PER_ORDER,
+        CASE
+            WHEN SUM(PM.TOTAL_REVENUE) >= 50000 THEN 'Top Performer'
+            WHEN SUM(PM.TOTAL_REVENUE) >= 20000 THEN 'Good Performer'
+            ELSE 'Low Performer'
+        END AS PERFORMANCE_CATEGORY,
+        ROUND((SUM(PM.TOTAL_REVENUE) / NULLIF(SUM(PM.TOTAL_QUANTITY_SOLD), 0)), 2) AS REVENUE_PER_UNIT
+    FROM
+        {{ ref('dt_slv_product_metrics') }} PM
+    {% if is_incremental() %}
+        WHERE PM.LOAD_DATE_MONTH >= COALESCE((SELECT MAX(LOAD_DATE_MONTH) FROM {{ this }}), '1900-01')
+    {% endif %}
+    GROUP BY
+        PM.PRODUCT_ID,
+        PM.PRODUCT_NAME,
+        PM.UNIT_PRICE
+)
+SELECT
+    *,
+    CURRENT_TIMESTAMP() AS LOAD_DATE,
+    CURRENT_DATE() AS LOAD_DATE_DAY,
+    TO_VARCHAR(CURRENT_DATE(),'YYYY-MM') AS LOAD_DATE_MONTH
+FROM
+    DT_MART
+ORDER BY
+    LOAD_DATE_MONTH DESC,
+    TOTAL_REVENUE DESC
+

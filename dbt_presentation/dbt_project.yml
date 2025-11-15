@@ -1,0 +1,98 @@
+
+# Name your project! Project names should contain only lowercase characters
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: 'dbt_presentation'
+version: '1.0.0'
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'dbt_presentation'
+
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
+
+# In this example config, we tell dbt to build all models in the example/
+# directory as views. These settings can be overridden in the individual model
+# files using the `{{ config(...) }}` macro.
+seeds:
+  dbt_presentation:
+    orders:
+      +database: DBT_PIPELINE
+      +schema: SEED
+      +delimiter: ','  # Le CSV utilise des virgules
+      +quote_columns: false  # Snowflake convertit automatiquement en majuscules
+      +header: true
+      +file: seeds/orders.csv
+      +description: "Orders seed table"
+      # Note: Utilisez 'dbt seed --full-refresh' pour remplacer automatiquement la table
+      +config:
+        column_types:
+          order_id: VARCHAR
+          customer_id: VARCHAR
+          product_id: VARCHAR
+          product_name: VARCHAR
+          order_date: DATE
+          quantity: NUMBER
+          unit_price: FLOAT
+          total_amount: FLOAT
+          status: VARCHAR
+          region: VARCHAR
+          customer_segment: VARCHAR
+
+models:
+  dbt_presentation:
+    # Config indicated by + and applies to all files under models/example/
+    sources:
+      +database: DBT_PIPELINE
+      +schema: SOURCE
+      +materialized: ephemeral
+      +contract:
+        +enforced: true
+        +quote_columns: false 
+    staging:
+      +database: DBT_PIPELINE
+      +schema: STAGING
+      +materialized: table
+      +contract:
+        +enforced: true
+        +quote_columns: false 
+    bronze:
+      +database: DBT_PIPELINE
+      +schema: BRONZE
+      +materialized: table
+      +contract:
+        +enforced: true
+        +quote_columns: false
+      +post-hook: "{{ add_constraints() }}"
+    silver:
+      +database: DBT_PIPELINE
+      +schema: SILVER
+      +materialized: table
+      +contract:
+        +enforced: true
+        +quote_columns: false
+      +post-hook: "{{ add_constraints() }}"
+    gold:
+      +database: DBT_PIPELINE
+      +schema: GOLD
+      +materialized: incremental
+      +append_new_columns: true
+      +contract:
+        +enforced: true
+        +quote_columns: false
+      +post-hook: "{{ add_constraints() }}" 

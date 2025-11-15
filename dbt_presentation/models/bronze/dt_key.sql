@@ -1,0 +1,20 @@
+WITH DT_KEY AS (
+    SELECT
+        DISTINCT
+        ORDER_ID,
+        CUSTOMER_ID,
+        PRODUCT_ID
+    FROM
+        {{ ref('dt_stg_orders') }}
+)
+SELECT
+    *,
+    CURRENT_TIMESTAMP() AS LOAD_DATE,
+    CURRENT_DATE() AS LOAD_DATE_DAY,
+    TO_VARCHAR(CURRENT_DATE(),'YYYY-MM') AS LOAD_DATE_MONTH 
+FROM
+    DT_KEY
+GROUP BY
+    ORDER_ID,
+    CUSTOMER_ID,
+    PRODUCT_ID

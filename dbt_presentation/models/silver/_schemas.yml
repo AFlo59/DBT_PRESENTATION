@@ -1,0 +1,145 @@
+version: 2
+
+models:
+  - name: dt_slv_orders_enriched
+    description: "Enriched orders table with customer, product and order details"
+    config:
+      constraints:
+        primary_key:
+          columns: ['ORDER_ID', 'CUSTOMER_ID', 'PRODUCT_ID']
+        foreign_keys:
+          - columns: ['ORDER_ID']
+            references: "dt_orders"
+          - columns: ['CUSTOMER_ID']
+            references: "dt_customers"
+          - columns: ['PRODUCT_ID']
+            references: "dt_products"
+    columns:
+      - name: ORDER_ID
+        type: VARCHAR(6)
+        description: "Order ID"
+      - name: CUSTOMER_ID
+        type: VARCHAR(5)
+        description: "Customer ID"
+      - name: PRODUCT_ID
+        type: VARCHAR(4)
+        description: "Product ID"
+      - name: ORDER_DATE
+        type: DATE
+        description: "Order Date"
+      - name: STATUS
+        type: VARCHAR(32)
+        description: "Order Status"
+      - name: REGION
+        type: VARCHAR(32)
+        description: "Customer Region"
+      - name: CUSTOMER_SEGMENT
+        type: VARCHAR(32)
+        description: "Customer Segment"
+      - name: PRODUCT_NAME
+        type: VARCHAR(64)
+        description: "Product Name"
+      - name: UNIT_PRICE
+        type: NUMBER(38,2)
+        description: "Unit Price"
+      - name: LOAD_DATE
+        type: TIMESTAMP_NTZ
+        description: "Load Date"
+      - name: LOAD_DATE_DAY
+        type: DATE
+        description: "Load Date Day"
+      - name: LOAD_DATE_MONTH
+        type: VARCHAR(7)
+        description: "Load Date Month"
+
+  - name: dt_slv_customer_metrics
+    description: "Customer metrics and analytics"
+    config:
+      constraints:
+        primary_key:
+          columns: ['CUSTOMER_ID']
+        foreign_keys:
+          - columns: ['CUSTOMER_ID']
+            references: "dt_customers"
+    columns:
+      - name: CUSTOMER_ID
+        type: VARCHAR(5)
+        description: "Customer ID"
+      - name: REGION
+        type: VARCHAR(32)
+        description: "Customer Region"
+      - name: CUSTOMER_SEGMENT
+        type: VARCHAR(32)
+        description: "Customer Segment"
+      - name: TOTAL_ORDERS
+        type: NUMBER(38,0)
+        description: "Total number of orders"
+      - name: TOTAL_PRODUCTS
+        type: NUMBER(38,0)
+        description: "Total number of unique products purchased"
+      - name: TOTAL_REVENUE
+        type: NUMBER(38,2)
+        description: "Total revenue from completed orders"
+      - name: AVG_ORDER_VALUE
+        type: NUMBER(38,2)
+        description: "Average order value"
+      - name: FIRST_ORDER_DATE
+        type: DATE
+        description: "Date of first order"
+      - name: LAST_ORDER_DATE
+        type: DATE
+        description: "Date of last order"
+      - name: LOAD_DATE
+        type: TIMESTAMP_NTZ
+        description: "Load Date"
+      - name: LOAD_DATE_DAY
+        type: DATE
+        description: "Load Date Day"
+      - name: LOAD_DATE_MONTH
+        type: VARCHAR(7)
+        description: "Load Date Month"
+
+  - name: dt_slv_product_metrics
+    description: "Product metrics and performance"
+    config:
+      constraints:
+        primary_key:
+          columns: ['PRODUCT_ID']
+        foreign_keys:
+          - columns: ['PRODUCT_ID']
+            references: "dt_products"
+    columns:
+      - name: PRODUCT_ID
+        type: VARCHAR(4)
+        description: "Product ID"
+      - name: PRODUCT_NAME
+        type: VARCHAR(64)
+        description: "Product Name"
+      - name: UNIT_PRICE
+        type: NUMBER(38,2)
+        description: "Unit Price"
+      - name: TOTAL_ORDERS
+        type: NUMBER(38,0)
+        description: "Total number of orders"
+      - name: TOTAL_CUSTOMERS
+        type: NUMBER(38,0)
+        description: "Total number of unique customers"
+      - name: TOTAL_QUANTITY_SOLD
+        type: NUMBER(38,0)
+        description: "Total quantity sold"
+      - name: TOTAL_REVENUE
+        type: NUMBER(38,2)
+        description: "Total revenue from completed orders"
+      - name: AVG_QUANTITY_PER_ORDER
+        type: NUMBER(38,2)
+        description: "Average quantity per order"
+      - name: LOAD_DATE
+        type: TIMESTAMP_NTZ
+        description: "Load Date"
+      - name: LOAD_DATE_DAY
+        type: DATE
+        description: "Load Date Day"
+      - name: LOAD_DATE_MONTH
+        type: VARCHAR(7)
+        description: "Load Date Month"
+

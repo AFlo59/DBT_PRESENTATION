@@ -1,0 +1,194 @@
+version: 2
+
+models:
+  - name: dt_mart_sales_daily
+    description: "Monthly sales mart with aggregated metrics by month (incremental)"
+    config:
+      constraints:
+        primary_key:
+          columns: ['LOAD_DATE_MONTH']
+    columns:
+      - name: LOAD_DATE_MONTH
+        type: VARCHAR(7)
+        description: "Load Date Month (YYYY-MM)"
+      - name: TOTAL_ORDERS
+        type: NUMBER(38,0)
+        description: "Total number of orders"
+      - name: TOTAL_CUSTOMERS
+        type: NUMBER(38,0)
+        description: "Total number of unique customers"
+      - name: TOTAL_PRODUCTS
+        type: NUMBER(38,0)
+        description: "Total number of unique products"
+      - name: TOTAL_QUANTITY
+        type: NUMBER(38,0)
+        description: "Total quantity sold"
+      - name: TOTAL_REVENUE
+        type: NUMBER(38,2)
+        description: "Total revenue"
+      - name: AVG_ORDER_VALUE
+        type: NUMBER(38,2)
+        description: "Average order value"
+      - name: FIRST_ORDER_DATE
+        type: DATE
+        description: "First order date in the month"
+      - name: LAST_ORDER_DATE
+        type: DATE
+        description: "Last order date in the month"
+      - name: LOAD_DATE
+        type: TIMESTAMP_NTZ
+        description: "Load Date"
+      - name: LOAD_DATE_DAY
+        type: DATE
+        description: "Load Date Day"
+
+  - name: dt_mart_sales_by_region
+    description: "Sales mart aggregated by region, customer segment and month (incremental)"
+    config:
+      constraints:
+        primary_key:
+          columns: ['REGION', 'CUSTOMER_SEGMENT', 'LOAD_DATE_MONTH']
+    columns:
+      - name: REGION
+        type: VARCHAR(32)
+        description: "Customer Region"
+      - name: CUSTOMER_SEGMENT
+        type: VARCHAR(32)
+        description: "Customer Segment"
+      - name: TOTAL_ORDERS
+        type: NUMBER(38,0)
+        description: "Total number of orders"
+      - name: TOTAL_CUSTOMERS
+        type: NUMBER(38,0)
+        description: "Total number of unique customers"
+      - name: TOTAL_PRODUCTS
+        type: NUMBER(38,0)
+        description: "Total number of unique products"
+      - name: TOTAL_QUANTITY
+        type: NUMBER(38,0)
+        description: "Total quantity sold"
+      - name: TOTAL_REVENUE
+        type: NUMBER(38,2)
+        description: "Total revenue"
+      - name: AVG_ORDER_VALUE
+        type: NUMBER(38,2)
+        description: "Average order value"
+      - name: FIRST_ORDER_DATE
+        type: DATE
+        description: "Date of first order"
+      - name: LAST_ORDER_DATE
+        type: DATE
+        description: "Date of last order"
+      - name: LOAD_DATE
+        type: TIMESTAMP_NTZ
+        description: "Load Date"
+      - name: LOAD_DATE_DAY
+        type: DATE
+        description: "Load Date Day"
+      - name: LOAD_DATE_MONTH
+        type: VARCHAR(7)
+        description: "Load Date Month"
+
+  - name: dt_mart_customer_analytics
+    description: "Customer analytics mart with value segmentation aggregated by month (incremental)"
+    config:
+      constraints:
+        primary_key:
+          columns: ['CUSTOMER_ID', 'REGION', 'CUSTOMER_SEGMENT', 'LOAD_DATE_MONTH']
+        foreign_keys:
+          - columns: ['CUSTOMER_ID']
+            references: "dt_customers"
+    columns:
+      - name: CUSTOMER_ID
+        type: VARCHAR(5)
+        description: "Customer ID"
+      - name: REGION
+        type: VARCHAR(32)
+        description: "Customer Region"
+      - name: CUSTOMER_SEGMENT
+        type: VARCHAR(32)
+        description: "Customer Segment"
+      - name: TOTAL_ORDERS
+        type: NUMBER(38,0)
+        description: "Total number of orders"
+      - name: TOTAL_PRODUCTS
+        type: NUMBER(38,0)
+        description: "Total number of unique products purchased"
+      - name: TOTAL_REVENUE
+        type: NUMBER(38,2)
+        description: "Total revenue from completed orders"
+      - name: AVG_ORDER_VALUE
+        type: NUMBER(38,2)
+        description: "Average order value"
+      - name: FIRST_ORDER_DATE
+        type: DATE
+        description: "Date of first order"
+      - name: LAST_ORDER_DATE
+        type: DATE
+        description: "Date of last order"
+      - name: CUSTOMER_LIFETIME_DAYS
+        type: NUMBER(38,0)
+        description: "Customer lifetime in days"
+      - name: VALUE_SEGMENT
+        type: VARCHAR(32)
+        description: "Value segment (High/Medium/Low Value)"
+      - name: LOAD_DATE
+        type: TIMESTAMP_NTZ
+        description: "Load Date"
+      - name: LOAD_DATE_DAY
+        type: DATE
+        description: "Load Date Day"
+      - name: LOAD_DATE_MONTH
+        type: VARCHAR(7)
+        description: "Load Date Month"
+
+  - name: dt_mart_product_performance
+    description: "Product performance mart with performance categorization aggregated by month (incremental)"
+    config:
+      constraints:
+        primary_key:
+          columns: ['PRODUCT_ID', 'LOAD_DATE_MONTH']
+        foreign_keys:
+          - columns: ['PRODUCT_ID']
+            references: "dt_products"
+    columns:
+      - name: PRODUCT_ID
+        type: VARCHAR(4)
+        description: "Product ID"
+      - name: PRODUCT_NAME
+        type: VARCHAR(64)
+        description: "Product Name"
+      - name: UNIT_PRICE
+        type: NUMBER(38,2)
+        description: "Unit Price"
+      - name: TOTAL_ORDERS
+        type: NUMBER(38,0)
+        description: "Total number of orders"
+      - name: TOTAL_CUSTOMERS
+        type: NUMBER(38,0)
+        description: "Total number of unique customers"
+      - name: TOTAL_QUANTITY_SOLD
+        type: NUMBER(38,0)
+        description: "Total quantity sold"
+      - name: TOTAL_REVENUE
+        type: NUMBER(38,2)
+        description: "Total revenue from completed orders"
+      - name: AVG_QUANTITY_PER_ORDER
+        type: NUMBER(38,2)
+        description: "Average quantity per order"
+      - name: PERFORMANCE_CATEGORY
+        type: VARCHAR(32)
+        description: "Performance category (Top/Good/Low Performer)"
+      - name: REVENUE_PER_UNIT
+        type: NUMBER(38,2)
+        description: "Revenue per unit sold"
+      - name: LOAD_DATE
+        type: TIMESTAMP_NTZ
+        description: "Load Date"
+      - name: LOAD_DATE_DAY
+        type: DATE
+        description: "Load Date Day"
+      - name: LOAD_DATE_MONTH
+        type: VARCHAR(7)
+        description: "Load Date Month"
+

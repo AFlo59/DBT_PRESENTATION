@@ -1,0 +1,34 @@
+# Python
+venv/
+env/
+ENV/
+.venv/
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# dbt
+dbt_presentation/target/
+dbt_presentation/dbt_packages/
+dbt_presentation/logs/
+dbt_presentation/.dbt/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
