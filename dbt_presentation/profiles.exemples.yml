@@ -1,0 +1,17 @@
+dbt_presentation:                # Nom du profile (doit être identique à "profile:" dans dbt_project.yml)
+  target: dev
+  outputs:
+
+    dev:
+      type: snowflake
+      # Account identifier depuis Snowflake (Account Details)
+      account: xxx # Account identifier de votre compte Snowflake
+      user: xxx             # Login name depuis Snowflake
+      password: xxx     # peut aussi être lu depuis un .env si tu veux
+      role: xxx       # Role depuis Snowflake
+      database: DBT_PIPELINE     # base default
+      warehouse: COMPUTE_WH       # warehouse
+      schema: BRONZE             # schema par défaut
+
+      threads: 1
+      client_session_keep_alive: false
