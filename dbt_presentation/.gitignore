@@ -5,3 +5,4 @@ logs/
 .dbt/
 profiles.yml
 .user.yml
+dbt_internal_packages/
